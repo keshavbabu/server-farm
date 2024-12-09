@@ -113,17 +113,35 @@ func (ui *UI) Redraw() {
 
 		return tcell.ColorPink
 	}
+
+	statusText := func(status StatusCode) string {
+		switch status {
+		case OK:
+			return "UP"
+		case STARTING:
+			return "STARTING"
+		case SHUTTINGDOWN:
+			return "SHUTTING DOWN"
+		case DOWN:
+			return "DOWN"
+		}
+
+		return "INVALID"
+	}
+
 	ui.table.Clear()
 
 	ui.table.SetBorder(true)
 
 	ui.table.SetCell(0, 1, tview.NewTableCell("port ").SetAlign(tview.AlignLeft))
-	ui.table.SetCell(0, 2, tview.NewTableCell("status    ").SetAlign(tview.AlignLeft))
+	ui.table.SetCell(0, 2, tview.NewTableCell("status       ").SetAlign(tview.AlignLeft))
 
 	for i, server := range ui.serverDetails {
 		color := statusColor(server.Status)
+		statusText := statusText(server.Status)
+
 		ui.table.SetCell(i+1, 1, tview.NewTableCell(fmt.Sprintf("%d", server.Port)).SetBackgroundColor(color))
-		ui.table.SetCell(i+1, 2, tview.NewTableCell(fmt.Sprintf("%d", server.Status)).SetBackgroundColor(color))
+		ui.table.SetCell(i+1, 2, tview.NewTableCell(statusText).SetBackgroundColor(color))
 	}
 }
 
